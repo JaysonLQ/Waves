@@ -169,22 +169,6 @@ class ExchangeTransactionSuite extends BaseTransactionSuite with CancelAfterFail
     assertBadRequest(sender.signedBroadcast(changedTx).id, 500) //TODO: change to correct error message
   }
 
-  def setContract(contractText: String, acc: PrivateKeyAccount) = {
-    val script = if (Option(contractText).isDefined) {
-      val scriptText = contractText.stripMargin
-      Some(ScriptCompiler(scriptText).explicitGet()._1)
-    } else None
-    val setScriptTransaction = SetScriptTransaction
-      .selfSigned(SetScriptTransaction.supportedVersions.head, acc, script, 0.014.waves, System.currentTimeMillis())
-      .right
-      .get
-    val setScriptId = sender
-      .signedBroadcast(setScriptTransaction.json() + ("type" -> JsNumber(SetScriptTransaction.typeId.toInt)))
-      .id
-    nodes.waitForHeightAriseAndTxPresent(setScriptId)
-
-  }
-
   def exchangeTx() = {
     val mf        = 700000L
     val matcher   = acc2
